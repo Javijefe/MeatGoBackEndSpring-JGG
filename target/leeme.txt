@@ -1,0 +1,17 @@
+Para subir la base de datos a Azure:
+- primero creamos un backup de la base de datos con el comando ""C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -h localhost -p 5432 -F p -b -v -f "C:\Users\porta\Documents\MeatGoSpringBoot\target\backup_db.dump" MeatGO"
+- Copiamos el fichero a la máquina de Azure: "scp -i ./javguagar.pem backup_db.dump javguagar@172.211.242.2:/home/javguagar/"
+- Conectamos con la máquina de Azure con Putty
+- Copiamos el fichero a la carpeta tmp "cp /home/javguagar/backup_db.dump /tmp/"
+- Lanzamos comando "sudo -i -u postgres"
+- Creamos la base de datos si hace falta con el comando "createdb -O postgres MeatGO"
+- Restauramos la base de datos con el comando "psql -U postgres -d MeatGO -f /tmp/backup_db.dump"
+- Por si fuese necesario establecer los permisos, entramos en psql y lanzamos el comando "GRANT ALL PRIVILEGES ON DATABASE MeatGO TO postgres;"
+
+Para subir el proyecto a Azure:
+- generar el .jar con el comando "mvn clean package"
+- Necesitamos en la misma carpeta el fichero .jar y el fichero .pem de la VM de Azure
+- Para subirlo a Azure abrir una ventana de línea de comandos y ejecutar el siguiente comando:
+     "scp -i ./javguagar.pem miapp-0.0.1-SNAPSHOT.jar javguagar@172.211.242.2:/home/javguagar/"
+- Conectar por SSH (p.e. con Putty) con la VM de Azure
+- Para ejecutar la aplicación lanzar el comando "java -jar /home/javguagar/miapp-0.0.1-SNAPSHOT.jar"
